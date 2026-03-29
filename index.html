@@ -256,10 +256,15 @@
   }
   .about-inner p {
     font-family: var(--font-body); font-weight: 100;
-    font-size: 1.05rem; line-height: 1.95;
+    font-size: 0.82rem; line-height: 2.1;
     color: var(--mid-grey); margin-bottom: 1.5rem;
+    letter-spacing: 0.015em;
   }
   .about-inner p:last-of-type { margin-bottom: 0; }
+
+  @media (max-width: 768px) {
+    .about-inner p { font-size: 1.05rem; line-height: 1.95; }
+  }
 
   /* ================================================================
      CONTACT
