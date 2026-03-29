@@ -348,18 +348,7 @@
 
 <!-- ====================== SPLASH ====================== -->
 <div id="splash" onclick="enterSite()">
-  <div class="splash-pair active">
-    <div class="splash-half" style="background-image:url('images/splash/pair1-left.jpg'); background-color:#1a1816;"></div>
-    <div class="splash-half" style="background-image:url('images/splash/pair1-right.jpg'); background-color:#1c1916;"></div>
-  </div>
-  <div class="splash-pair">
-    <div class="splash-half" style="background-image:url('images/splash/pair2-left.jpg'); background-color:#1e1b18;"></div>
-    <div class="splash-half" style="background-image:url('images/splash/pair2-right.jpg'); background-color:#181614;"></div>
-  </div>
-  <div class="splash-pair">
-    <div class="splash-half" style="background-image:url('images/splash/pair3-left.jpg'); background-color:#1a1816;"></div>
-    <div class="splash-half" style="background-image:url('images/splash/pair3-right.jpg'); background-color:#1c1916;"></div>
-  </div>
+  <div id="splashPairs"></div>
 
   <div class="splash-center">
     <div class="splash-name">SOFIA LAZZARI</div>
@@ -450,47 +439,97 @@ const CLOUDINARY_CLOUD_NAME = 'dvxeqhncc';
 const EDITORIAL_TAG = 'sofia-editorial';
 const COVERS_TAG = 'sofia-covers';
 const COMMERCIAL_TAG = 'sofia-commercial';
+const SPLASH_TAG = 'sofia-splash';
 const SPLASH_INTERVAL = 4500;
 
 // ==============================================================
-//  SPLASH
+//  CLOUDINARY — fetches images by TAG (not folder)
+//  Sofia just needs to tag images in Cloudinary Media Library
+// ==============================================================
+async function fetchCloudinaryImages(tag) {
+  try {
+    const res = await fetch(`https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/list/${tag}.json`);
+    if (!res.ok) throw new Error();
+    return (await res.json()).resources || [];
+  } catch { return []; }
+}
+function cloudUrl(id, t) {
+  return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${t}/${id}`;
+}
+
+// ==============================================================
+//  SPLASH — load images from Cloudinary, pair them, preload first pair
 // ==============================================================
 let splashIdx = 0;
-const pairs = document.querySelectorAll('.splash-pair');
+let pairs = [];
+let splashTimer = null;
+document.body.style.overflow = 'hidden';
+
 function rotateSplash() {
   if (pairs.length <= 1) return;
   pairs[splashIdx].classList.remove('active');
   splashIdx = (splashIdx + 1) % pairs.length;
   pairs[splashIdx].classList.add('active');
 }
-let splashTimer = setInterval(rotateSplash, SPLASH_INTERVAL);
-document.body.style.overflow = 'hidden';
 
-// Preload first pair of splash images before showing
-(function preloadSplash() {
-  const firstPair = document.querySelector('.splash-pair.active');
-  if (!firstPair) return;
-  const halves = firstPair.querySelectorAll('.splash-half');
-  const urls = [];
-  halves.forEach(h => {
-    const bg = h.style.backgroundImage;
-    const match = bg.match(/url\(['"]?(.+?)['"]?\)/);
-    if (match) urls.push(match[1]);
+(async function initSplash() {
+  const container = document.getElementById('splashPairs');
+  const images = await fetchCloudinaryImages(SPLASH_TAG);
+
+  if (!images.length) {
+    document.getElementById('splash').classList.add('ready');
+    return;
+  }
+
+  // Sort by filename
+  images.sort((a, b) => {
+    const nameA = a.public_id.split('/').pop().toLowerCase();
+    const nameB = b.public_id.split('/').pop().toLowerCase();
+    return nameA.localeCompare(nameB);
   });
-  if (!urls.length) { document.getElementById('splash').classList.add('ready'); return; }
+
+  // Build image URLs
+  const urls = images.map(img =>
+    cloudUrl(img.public_id, 'w_1200,q_auto,f_auto')
+  );
+
+  // Create pairs (every 2 images = 1 pair)
+  for (let i = 0; i < urls.length; i += 2) {
+    const pair = document.createElement('div');
+    pair.className = 'splash-pair' + (i === 0 ? ' active' : '');
+    const left = document.createElement('div');
+    left.className = 'splash-half';
+    left.style.backgroundImage = `url('${urls[i]}')`;
+    left.style.backgroundColor = '#1a1816';
+    pair.appendChild(left);
+    if (urls[i + 1]) {
+      const right = document.createElement('div');
+      right.className = 'splash-half';
+      right.style.backgroundImage = `url('${urls[i + 1]}')`;
+      right.style.backgroundColor = '#1c1916';
+      pair.appendChild(right);
+    }
+    container.appendChild(pair);
+  }
+
+  pairs = document.querySelectorAll('.splash-pair');
+  splashTimer = setInterval(rotateSplash, SPLASH_INTERVAL);
+
+  // Preload first pair before showing
+  const firstUrls = urls.slice(0, 2);
   let loaded = 0;
-  urls.forEach(src => {
+  firstUrls.forEach(src => {
     const img = new Image();
     img.onload = img.onerror = () => {
       loaded++;
-      if (loaded >= urls.length) {
+      if (loaded >= firstUrls.length) {
         document.getElementById('splash').classList.add('ready');
       }
     };
     img.src = src;
   });
-  // Fallback: show splash after 4s regardless
-  setTimeout(() => { document.getElementById('splash').classList.add('ready'); }, 4000);
+  // Fallback
+  setTimeout(() => { document.getElementById('splash').classList.add('ready'); }, 5000);
 })();
 
 function enterSite() {
@@ -528,20 +567,8 @@ function closeMobile() {
 }
 
 // ==============================================================
-//  CLOUDINARY — fetches images by TAG (not folder)
-//  Sofia just needs to tag images in Cloudinary Media Library
+//  LOAD IMAGES INTO GRIDS
 // ==============================================================
-async function fetchCloudinaryImages(tag) {
-  try {
-    const res = await fetch(`https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/list/${tag}.json`);
-    if (!res.ok) throw new Error();
-    return (await res.json()).resources || [];
-  } catch { return []; }
-}
-function cloudUrl(id, t) {
-  return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${t}/${id}`;
-}
-
 async function loadImages(section) {
   const tag = section === 'editorial' ? EDITORIAL_TAG : COVERS_TAG;
   const grid = document.getElementById(section === 'editorial' ? 'editorialGrid' : 'coversGrid');
