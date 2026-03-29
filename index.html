@@ -419,14 +419,7 @@
 
   <section id="commercial" class="page">
     <div class="commercial-inner">
-      <div class="commercial-images" id="commercialImages">
-        <div class="grid-item" style="animation-delay:0s">
-          <div class="placeholder-img" style="background:#eae7e2"></div>
-        </div>
-        <div class="grid-item" style="animation-delay:0.05s">
-          <div class="placeholder-img" style="background:#e0ddd8"></div>
-        </div>
-      </div>
+      <div class="commercial-images" id="commercialImages"></div>
       <div class="commercial-clients">
         <ul>
           <li>Adidas</li>
@@ -473,6 +466,7 @@
 const CLOUDINARY_CLOUD_NAME = 'dvxeqhncc';
 const EDITORIAL_TAG = 'sofia-editorial';
 const COVERS_TAG = 'sofia-covers';
+const COMMERCIAL_TAG = 'sofia-commercial';
 const SPLASH_INTERVAL = 4500;
 
 // ==============================================================
@@ -523,6 +517,7 @@ function enterSite() {
   document.body.style.overflow = 'auto';
   loadImages('editorial');
   loadImages('covers');
+  loadCommercialImages();
 }
 
 // ==============================================================
@@ -586,6 +581,34 @@ async function loadImages(section) {
     const el = document.createElement('img');
     el.src = cloudUrl(img.public_id, 'w_700,ar_3:4,c_fill,g_auto,q_auto,f_auto');
     el.alt = img.context?.custom?.caption || `Styling by Sofia Lazzari`;
+    el.loading = 'lazy';
+    div.appendChild(el);
+    grid.appendChild(div);
+  });
+}
+
+// ==============================================================
+//  COMMERCIAL IMAGES
+// ==============================================================
+async function loadCommercialImages() {
+  const grid = document.getElementById('commercialImages');
+  const images = await fetchCloudinaryImages(COMMERCIAL_TAG);
+
+  if (!images.length) return;
+
+  images.sort((a, b) => {
+    const nameA = a.public_id.split('/').pop().toLowerCase();
+    const nameB = b.public_id.split('/').pop().toLowerCase();
+    return nameA.localeCompare(nameB);
+  });
+
+  images.forEach((img, i) => {
+    const div = document.createElement('div');
+    div.className = 'grid-item';
+    div.style.animationDelay = `${i * 0.05}s`;
+    const el = document.createElement('img');
+    el.src = cloudUrl(img.public_id, 'w_700,ar_3:4,c_fill,g_auto,q_auto,f_auto');
+    el.alt = img.context?.custom?.caption || `Commercial styling by Sofia Lazzari`;
     el.loading = 'lazy';
     div.appendChild(el);
     grid.appendChild(div);
