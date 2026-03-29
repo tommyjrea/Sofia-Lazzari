@@ -292,15 +292,15 @@
   }
   .commercial-images {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: var(--gap);
     margin-bottom: 4rem;
   }
   .commercial-images .grid-item {
     aspect-ratio: 3/4;
   }
-  @media (max-width: 480px) {
-    .commercial-images { grid-template-columns: 1fr; }
+  @media (max-width: 768px) {
+    .commercial-images { grid-template-columns: repeat(2, 1fr); }
   }
 
   .commercial-clients {
