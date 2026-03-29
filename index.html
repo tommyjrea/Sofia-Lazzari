@@ -57,7 +57,9 @@
     cursor: pointer;
     background: var(--black);
     transition: opacity 0.9s ease, visibility 0.9s ease;
+    opacity: 0;
   }
+  #splash.ready { opacity: 1; }
   #splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
   .splash-pair {
@@ -226,14 +228,12 @@
   }
 
   .grid-item {
-    overflow: hidden; cursor: pointer; position: relative;
+    overflow: hidden; position: relative;
     aspect-ratio: 3/4;
   }
   .grid-item img {
     width: 100%; height: 100%; object-fit: cover; display: block;
-    transition: transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
-  .grid-item:hover img { transform: scale(1.03); }
 
   .grid-item.landscape { aspect-ratio: 4/3; }
   .grid-item.square { aspect-ratio: 1/1; }
@@ -332,25 +332,6 @@
   }
   .commercial-clients li:last-child::after {
     content: '';
-  }
-
-  /* ================================================================
-     LIGHTBOX — white overlay to match white site
-     ================================================================ */
-  .lightbox {
-    position: fixed; inset: 0; z-index: 500;
-    background: rgba(255,255,255,0.97);
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; visibility: hidden;
-    transition: opacity 0.35s, visibility 0.35s;
-    cursor: pointer;
-  }
-  .lightbox.open { opacity: 1; visibility: visible; }
-  .lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; }
-  .lightbox-close {
-    position: absolute; top: 1.6rem; right: 2rem;
-    font-family: var(--font-body); font-size: 0.82rem;
-    letter-spacing: 0.06em; color: var(--black);
   }
 
   /* ================================================================
@@ -488,11 +469,6 @@
   </footer>
 </div>
 
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox" onclick="closeLightbox()">
-  <button class="lightbox-close">close</button>
-  <img id="lightboxImg" src="" alt="">
-</div>
 
 <script>
 // ==============================================================
@@ -516,6 +492,33 @@ function rotateSplash() {
 }
 let splashTimer = setInterval(rotateSplash, SPLASH_INTERVAL);
 document.body.style.overflow = 'hidden';
+
+// Preload first pair of splash images before showing
+(function preloadSplash() {
+  const firstPair = document.querySelector('.splash-pair.active');
+  if (!firstPair) return;
+  const halves = firstPair.querySelectorAll('.splash-half');
+  const urls = [];
+  halves.forEach(h => {
+    const bg = h.style.backgroundImage;
+    const match = bg.match(/url\(['"]?(.+?)['"]?\)/);
+    if (match) urls.push(match[1]);
+  });
+  if (!urls.length) { document.getElementById('splash').classList.add('ready'); return; }
+  let loaded = 0;
+  urls.forEach(src => {
+    const img = new Image();
+    img.onload = img.onerror = () => {
+      loaded++;
+      if (loaded >= urls.length) {
+        document.getElementById('splash').classList.add('ready');
+      }
+    };
+    img.src = src;
+  });
+  // Fallback: show splash after 4s regardless
+  setTimeout(() => { document.getElementById('splash').classList.add('ready'); }, 4000);
+})();
 
 function enterSite() {
   clearInterval(splashTimer);
@@ -586,7 +589,6 @@ async function loadImages(section) {
     el.src = cloudUrl(img.public_id, 'w_700,q_auto,f_auto');
     el.alt = img.context?.custom?.caption || `Styling by Sofia Lazzari`;
     el.loading = 'lazy';
-    el.onclick = () => openLightbox(cloudUrl(img.public_id, 'w_1800,q_auto,f_auto'));
     div.appendChild(el);
     grid.appendChild(div);
   });
@@ -623,19 +625,7 @@ function renderPlaceholders(grid, section) {
   if (se) { se.href = ml; se.textContent = 'get in touch: ' + addr; }
 })();
 
-// ==============================================================
-//  LIGHTBOX
-// ==============================================================
-function openLightbox(src) {
-  document.getElementById('lightboxImg').src = src;
-  document.getElementById('lightbox').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('open');
-  document.body.style.overflow = 'auto';
-}
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
 </script>
 </body>
 </html>
