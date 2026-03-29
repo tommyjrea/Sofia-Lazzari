@@ -305,29 +305,15 @@
 
   .commercial-clients {
     text-align: center;
-    padding: 0 2rem;
+    padding: 0 2rem 3rem;
   }
-  .commercial-clients ul {
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.2rem 0;
-  }
-  .commercial-clients li {
+  .commercial-clients p {
     font-family: var(--font-body);
     font-weight: 100;
-    font-size: 1rem;
-    letter-spacing: 0.02em;
+    font-size: 1.05rem;
+    line-height: 1.95;
     color: var(--mid-grey);
-    line-height: 1.9;
-  }
-  .commercial-clients li::after {
-    content: '\00a0\00a0/\00a0\00a0';
-    color: var(--light-grey);
-  }
-  .commercial-clients li:last-child::after {
-    content: '';
+    letter-spacing: 0.01em;
   }
 
   /* ================================================================
@@ -419,22 +405,10 @@
 
   <section id="commercial" class="page">
     <div class="commercial-inner">
-      <div class="commercial-images" id="commercialImages"></div>
       <div class="commercial-clients">
-        <ul>
-          <li>Adidas</li>
-          <li>Aspinal of London</li>
-          <li>Barbour</li>
-          <li>Bentley</li>
-          <li>Fiat</li>
-          <li>Jigsaw</li>
-          <li>Liberty</li>
-          <li>Monica Vinader</li>
-          <li>Radley</li>
-          <li>Sephora</li>
-          <li>Tala</li>
-        </ul>
+        <p>Commercial clients include Adidas, Aspinal of London, Barbour, Bentley, Fiat, Jigsaw, Liberty, Monica Vinader, Radley, Sephora, and Tala.</p>
       </div>
+      <div class="commercial-images" id="commercialImages"></div>
     </div>
   </section>
 
