@@ -497,8 +497,8 @@
 //  CONFIG — Update these two values
 // ==============================================================
 const CLOUDINARY_CLOUD_NAME = 'dvxeqhncc';
-const EDITORIAL_FOLDER = 'sofia-editorial';
-const COVERS_FOLDER = 'sofia-covers';
+const EDITORIAL_TAG = 'sofia-editorial';
+const COVERS_TAG = 'sofia-covers';
 const SPLASH_INTERVAL = 4500;
 
 // ==============================================================
@@ -549,11 +549,12 @@ function closeMobile() {
 }
 
 // ==============================================================
-//  CLOUDINARY
+//  CLOUDINARY — fetches images by TAG (not folder)
+//  Sofia just needs to tag images in Cloudinary Media Library
 // ==============================================================
-async function fetchCloudinaryImages(folder) {
+async function fetchCloudinaryImages(tag) {
   try {
-    const res = await fetch(`https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/list/${folder}.json`);
+    const res = await fetch(`https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/list/${tag}.json`);
     if (!res.ok) throw new Error();
     return (await res.json()).resources || [];
   } catch { return []; }
@@ -563,9 +564,9 @@ function cloudUrl(id, t) {
 }
 
 async function loadImages(section) {
-  const folder = section === 'editorial' ? EDITORIAL_FOLDER : COVERS_FOLDER;
+  const tag = section === 'editorial' ? EDITORIAL_TAG : COVERS_TAG;
   const grid = document.getElementById(section === 'editorial' ? 'editorialGrid' : 'coversGrid');
-  const images = await fetchCloudinaryImages(folder);
+  const images = await fetchCloudinaryImages(tag);
 
   if (!images.length) { renderPlaceholders(grid, section); return; }
 
