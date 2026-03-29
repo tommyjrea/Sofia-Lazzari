@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sofia Lazzari — Fashion Stylist & Creative Director</title>
+<meta name="description" content="Sofia Lazzari is a London-based fashion stylist and creative director. Editorial and commercial styling for British Vogue, international Vogues, Aspinal of London, Liberty, Bentley and more.">
+<style>
+  @font-face {
+    font-family: 'CanelaText';
+    src: url('fonts/CanelaText-Thin.woff') format('woff');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Canela';
+    src: url('fonts/Canela-Thin.woff') format('woff');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Canela';
+    src: url('fonts/Canela-ThinItalic-Trial.woff') format('woff');
+    font-weight: 100;
+    font-style: italic;
+    font-display: swap;
+  }
+
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+  :root {
+    --font-logo: 'CanelaText', serif;
+    --font-body: 'Canela', serif;
+    --black: #111;
+    --white: #fff;
+    --grey: #999;
+    --mid-grey: #666;
+    --light-grey: #ccc;
+    --gap: 8px;
+  }
+
+  html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  body { font-family: var(--font-body); background: var(--white); color: var(--black); overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; }
+  img { display: block; max-width: 100%; }
+
+  /* ================================================================
+     SPLASH — Split-screen rotating image pairs
+     ================================================================ */
+  #splash {
+    position: fixed; inset: 0; z-index: 1000;
+    cursor: pointer;
+    background: var(--black);
+    transition: opacity 0.9s ease, visibility 0.9s ease;
+  }
+  #splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+  .splash-pair {
+    position: absolute; inset: 0;
+    display: flex;
+    opacity: 0;
+    transition: opacity 1.8s ease-in-out;
+  }
+  .splash-pair.active { opacity: 1; }
+
+  .splash-half {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  .splash-half::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.1);
+  }
+
+  .splash-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    text-align: center;
+    pointer-events: none;
+  }
+  .splash-name {
+    font-family: var(--font-logo);
+    font-weight: 100;
+    font-size: clamp(3rem, 8vw, 7.5rem);
+    letter-spacing: 0.06em;
+    color: var(--white);
+    white-space: nowrap;
+    text-shadow: 0 2px 60px rgba(0,0,0,0.15);
+    opacity: 0;
+    animation: splashFade 1.4s 0.3s forwards;
+  }
+
+  .splash-bottom {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    padding: 1.6rem 2rem;
+  }
+  .splash-bottom a {
+    font-family: var(--font-body);
+    font-weight: 100;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.55);
+    transition: color 0.3s;
+    pointer-events: auto;
+  }
+  .splash-bottom a:hover { color: var(--white); }
+
+  @keyframes splashFade { from { opacity: 0; } to { opacity: 1; } }
+
+  /* ================================================================
+     MAIN SITE
+     ================================================================ */
+  #site { opacity: 0; transition: opacity 0.7s 0.15s ease; }
+  #site.visible { opacity: 1; }
+
+  /* ================================================================
+     NAV — logo left · category links center · about/contact right
+     ================================================================ */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--white);
+    display: flex;
+    align-items: baseline;
+    padding: 1.5rem 2rem 1.3rem;
+    gap: 1rem;
+  }
+
+  .nav-logo {
+    font-family: var(--font-logo);
+    font-weight: 100;
+    font-size: 1.25rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--black);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .nav-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    gap: 0.35rem;
+  }
+  .nav-center a, .nav-center span {
+    font-family: var(--font-body);
+    font-weight: 100;
+    font-size: 0.82rem;
+    letter-spacing: 0.015em;
+    color: var(--grey);
+    transition: color 0.25s;
+  }
+  .nav-center span { color: var(--light-grey); user-select: none; }
+  .nav-center a:hover { color: var(--black); }
+  .nav-center a.active { color: var(--black); text-decoration: underline; text-underline-offset: 3px; }
+
+  .nav-right {
+    display: flex; gap: 0.35rem;
+    flex-shrink: 0;
+  }
+  .nav-right a, .nav-right span {
+    font-family: var(--font-body);
+    font-weight: 100;
+    font-size: 0.82rem;
+    letter-spacing: 0.015em;
+    color: var(--grey);
+    transition: color 0.25s;
+  }
+  .nav-right span { color: var(--light-grey); user-select: none; }
+  .nav-right a:hover { color: var(--black); }
+  .nav-right a.active { color: var(--black); text-decoration: underline; text-underline-offset: 3px; }
+
+  .nav-hamburger {
+    display: none; flex-direction: column; gap: 5px; padding: 4px; margin-left: auto;
+  }
+  .nav-hamburger span { display: block; width: 20px; height: 1px; background: var(--black); transition: all 0.3s; }
+  .nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(4px,4px); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(4px,-4px); }
+
+  .mobile-menu {
+    display: none; position: fixed; inset: 0; z-index: 150;
+    background: var(--white);
+    flex-direction: column; align-items: center; justify-content: center; gap: 2rem;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    font-family: var(--font-body); font-size: 1.1rem; font-weight: 100;
+    letter-spacing: 0.04em; color: var(--black);
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 1.2rem 1.2rem; }
+    .nav-center, .nav-right { display: none; }
+    .nav-hamburger { display: flex; }
+  }
+
+  /* ================================================================
+     PAGES
+     ================================================================ */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ================================================================
+     IMAGE GRID — 4 columns, matching reference
+     ================================================================ */
+  .image-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--gap);
+    padding: var(--gap) 2rem 2rem;
+  }
+
+  .grid-item {
+    overflow: hidden; cursor: pointer; position: relative;
+    aspect-ratio: 3/4;
+  }
+  .grid-item img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  .grid-item:hover img { transform: scale(1.03); }
+
+  .grid-item.landscape { aspect-ratio: 4/3; }
+  .grid-item.square { aspect-ratio: 1/1; }
+  .grid-item.tall { aspect-ratio: 2/3; }
+
+  @media (max-width: 1024px) { .image-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 768px) { .image-grid { grid-template-columns: repeat(2, 1fr); padding: var(--gap) 1rem 1rem; } }
+  @media (max-width: 480px) { .image-grid { grid-template-columns: 1fr; } }
+
+  .grid-item {
+    opacity: 0; transform: translateY(10px);
+    animation: gridIn 0.5s forwards;
+  }
+  @keyframes gridIn { to { opacity: 1; transform: translateY(0); } }
+
+  /* ================================================================
+     ABOUT
+     ================================================================ */
+  #about { min-height: 80vh; display: none; align-items: center; justify-content: center; }
+  #about.active { display: flex; }
+
+  .about-inner {
+    max-width: 540px; padding: 6rem 2rem; text-align: left;
+  }
+  .about-inner p {
+    font-family: var(--font-body); font-weight: 100;
+    font-size: 1.05rem; line-height: 1.95;
+    color: var(--mid-grey); margin-bottom: 1.5rem;
+  }
+  .about-inner p:last-of-type { margin-bottom: 0; }
+
+  /* ================================================================
+     CONTACT
+     ================================================================ */
+  #contact { min-height: 80vh; display: none; align-items: center; justify-content: center; }
+  #contact.active { display: flex; }
+
+  .contact-inner { text-align: center; padding: 6rem 2rem; }
+  .contact-email {
+    font-family: var(--font-body); font-weight: 100;
+    font-size: 1.15rem; letter-spacing: 0.04em; color: var(--black);
+    transition: color 0.3s;
+  }
+  .contact-email:hover { color: var(--mid-grey); }
+  .contact-social { margin-top: 2.5rem; }
+  .contact-social a {
+    font-family: var(--font-body); font-size: 0.82rem; font-weight: 100;
+    letter-spacing: 0.04em; color: var(--grey); transition: color 0.3s;
+  }
+  .contact-social a:hover { color: var(--black); }
+
+  /* ================================================================
+     COMMERCIAL
+     ================================================================ */
+  #commercial { min-height: 80vh; display: none; }
+  #commercial.active { display: block; }
+
+  .commercial-inner {
+    padding: 0 2rem 4rem;
+  }
+  .commercial-images {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--gap);
+    margin-bottom: 4rem;
+  }
+  .commercial-images .grid-item {
+    aspect-ratio: 3/4;
+  }
+  @media (max-width: 480px) {
+    .commercial-images { grid-template-columns: 1fr; }
+  }
+
+  .commercial-clients {
+    text-align: center;
+    padding: 0 2rem;
+  }
+  .commercial-clients ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.2rem 0;
+  }
+  .commercial-clients li {
+    font-family: var(--font-body);
+    font-weight: 100;
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+    color: var(--mid-grey);
+    line-height: 1.9;
+  }
+  .commercial-clients li::after {
+    content: '\00a0\00a0/\00a0\00a0';
+    color: var(--light-grey);
+  }
+  .commercial-clients li:last-child::after {
+    content: '';
+  }
+
+  /* ================================================================
+     LIGHTBOX — white overlay to match white site
+     ================================================================ */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 500;
+    background: rgba(255,255,255,0.97);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.35s, visibility 0.35s;
+    cursor: pointer;
+  }
+  .lightbox.open { opacity: 1; visibility: visible; }
+  .lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; }
+  .lightbox-close {
+    position: absolute; top: 1.6rem; right: 2rem;
+    font-family: var(--font-body); font-size: 0.82rem;
+    letter-spacing: 0.06em; color: var(--black);
+  }
+
+  /* ================================================================
+     FOOTER — matching reference bottom bar
+     ================================================================ */
+  footer {
+    padding: 3rem 2rem;
+    display: flex; justify-content: space-between; align-items: flex-end;
+    font-family: var(--font-body); font-size: 0.7rem; font-weight: 100;
+    letter-spacing: 0.04em; color: var(--light-grey);
+  }
+  footer a { transition: color 0.25s; }
+  footer a:hover { color: var(--grey); }
+
+  /* ================================================================
+     PLACEHOLDERS
+     ================================================================ */
+  .placeholder-img {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-body); font-size: 0.6rem;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--light-grey);
+  }
+</style>
+</head>
+<body>
+
+<!-- ====================== SPLASH ====================== -->
+<div id="splash" onclick="enterSite()">
+  <div class="splash-pair active">
+    <div class="splash-half" style="background-image:url('images/splash/pair1-left.jpg'); background-color:#1a1816;"></div>
+    <div class="splash-half" style="background-image:url('images/splash/pair1-right.jpg'); background-color:#1c1916;"></div>
+  </div>
+  <div class="splash-pair">
+    <div class="splash-half" style="background-image:url('images/splash/pair2-left.jpg'); background-color:#1e1b18;"></div>
+    <div class="splash-half" style="background-image:url('images/splash/pair2-right.jpg'); background-color:#181614;"></div>
+  </div>
+  <div class="splash-pair">
+    <div class="splash-half" style="background-image:url('images/splash/pair3-left.jpg'); background-color:#1a1816;"></div>
+    <div class="splash-half" style="background-image:url('images/splash/pair3-right.jpg'); background-color:#1c1916;"></div>
+  </div>
+
+  <div class="splash-center">
+    <div class="splash-name">SOFIA LAZZARI</div>
+  </div>
+
+  <div class="splash-bottom">
+    <a href="https://www.instagram.com/sofialazzarystyling" target="_blank" rel="noopener" onclick="event.stopPropagation()">instagram</a>
+    <a href="#" id="splashEmail" onclick="event.stopPropagation()">get in touch</a>
+  </div>
+</div>
+
+<!-- ====================== SITE ====================== -->
+<div id="site">
+  <nav>
+    <a href="#" class="nav-logo" onclick="navigateTo('editorial'); return false;">SOFIA LAZZARI</a>
+    <div class="nav-center">
+      <a href="#covers" onclick="navigateTo('covers'); return false;" id="navCovers">covers</a>
+      <span>/</span>
+      <a href="#editorial" onclick="navigateTo('editorial'); return false;" id="navEditorial" class="active">editorial</a>
+      <span>/</span>
+      <a href="#commercial" onclick="navigateTo('commercial'); return false;" id="navCommercial">commercial</a>
+    </div>
+    <div class="nav-right">
+      <a href="#about" onclick="navigateTo('about'); return false;" id="navAbout">about</a>
+      <span>/</span>
+      <a href="#contact" onclick="navigateTo('contact'); return false;" id="navContact">contact</a>
+    </div>
+    <button class="nav-hamburger" onclick="toggleMobile()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#" onclick="navigateTo('covers'); closeMobile(); return false;">covers</a>
+    <a href="#" onclick="navigateTo('editorial'); closeMobile(); return false;">editorial</a>
+    <a href="#" onclick="navigateTo('commercial'); closeMobile(); return false;">commercial</a>
+    <a href="#" onclick="navigateTo('about'); closeMobile(); return false;">about</a>
+    <a href="#" onclick="navigateTo('contact'); closeMobile(); return false;">contact</a>
+  </div>
+
+  <section id="covers" class="page">
+    <div class="image-grid" id="coversGrid"></div>
+  </section>
+
+  <section id="editorial" class="page active">
+    <div class="image-grid" id="editorialGrid"></div>
+  </section>
+
+  <section id="commercial" class="page">
+    <div class="commercial-inner">
+      <div class="commercial-images" id="commercialImages">
+        <div class="grid-item" style="animation-delay:0s">
+          <div class="placeholder-img" style="background:#eae7e2"></div>
+        </div>
+        <div class="grid-item" style="animation-delay:0.05s">
+          <div class="placeholder-img" style="background:#e0ddd8"></div>
+        </div>
+      </div>
+      <div class="commercial-clients">
+        <ul>
+          <li>Adidas</li>
+          <li>Aspinal of London</li>
+          <li>Barbour</li>
+          <li>Bentley</li>
+          <li>Fiat</li>
+          <li>Jigsaw</li>
+          <li>Liberty</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="page">
+    <div class="about-inner">
+      <p>Sofia Lazzari is a London-based fashion stylist and creative director, originally from Venice.</p>
+      <p>Her work spans editorial and commercial projects, with features in British Vogue, and international Vogues including Hong Kong, Poland, Philippines, Portugal, Turkey, and Czechoslovakia.</p>
+      <p>She has collaborated with brands including Aspinal of London, Liberty, Bentley, Adidas, Barbour, Jigsaw, and Fiat.</p>
+    </div>
+  </section>
+
+  <section id="contact" class="page">
+    <div class="contact-inner">
+      <a class="contact-email" href="#" id="contactEmail">loading...</a>
+      <div class="contact-social">
+        <a href="https://www.instagram.com/sofialazzarystyling" target="_blank" rel="noopener">Instagram</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <a href="https://www.instagram.com/sofialazzarystyling" target="_blank" rel="noopener">instagram</a>
+    <span>&copy; Sofia Lazzari <script>document.write(new Date().getFullYear())</script></span>
+    <a href="#" id="footerEmail">get in touch</a>
+  </footer>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close">close</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<script>
+// ==============================================================
+//  CONFIG — Update these two values
+// ==============================================================
+const CLOUDINARY_CLOUD_NAME = 'dvxeqhncc';
+const EDITORIAL_FOLDER = 'sofia-editorial';
+const COVERS_FOLDER = 'sofia-covers';
+const SPLASH_INTERVAL = 4500;
+
+// ==============================================================
+//  SPLASH
+// ==============================================================
+let splashIdx = 0;
+const pairs = document.querySelectorAll('.splash-pair');
+function rotateSplash() {
+  if (pairs.length <= 1) return;
+  pairs[splashIdx].classList.remove('active');
+  splashIdx = (splashIdx + 1) % pairs.length;
+  pairs[splashIdx].classList.add('active');
+}
+let splashTimer = setInterval(rotateSplash, SPLASH_INTERVAL);
+document.body.style.overflow = 'hidden';
+
+function enterSite() {
+  clearInterval(splashTimer);
+  document.getElementById('splash').classList.add('hidden');
+  document.getElementById('site').classList.add('visible');
+  document.body.style.overflow = 'auto';
+  loadImages('editorial');
+  loadImages('covers');
+}
+
+// ==============================================================
+//  NAV
+// ==============================================================
+const allPages = ['covers','editorial','commercial','about','contact'];
+const navMap = {covers:'navCovers',editorial:'navEditorial',commercial:'navCommercial',about:'navAbout',contact:'navContact'};
+
+function navigateTo(page) {
+  allPages.forEach(p => {
+    document.getElementById(p)?.classList.remove('active');
+    document.getElementById(navMap[p])?.classList.remove('active');
+  });
+  document.getElementById(page).classList.add('active');
+  document.getElementById(navMap[page])?.classList.add('active');
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function toggleMobile() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+  document.querySelector('.nav-hamburger').classList.toggle('open');
+}
+function closeMobile() {
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.querySelector('.nav-hamburger').classList.remove('open');
+}
+
+// ==============================================================
+//  CLOUDINARY
+// ==============================================================
+async function fetchCloudinaryImages(folder) {
+  try {
+    const res = await fetch(`https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/list/${folder}.json`);
+    if (!res.ok) throw new Error();
+    return (await res.json()).resources || [];
+  } catch { return []; }
+}
+function cloudUrl(id, t) {
+  return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${t}/${id}`;
+}
+
+async function loadImages(section) {
+  const folder = section === 'editorial' ? EDITORIAL_FOLDER : COVERS_FOLDER;
+  const grid = document.getElementById(section === 'editorial' ? 'editorialGrid' : 'coversGrid');
+  const images = await fetchCloudinaryImages(folder);
+
+  if (!images.length) { renderPlaceholders(grid, section); return; }
+
+  images.forEach((img, i) => {
+    const div = document.createElement('div');
+    div.className = 'grid-item';
+    div.style.animationDelay = `${i * 0.05}s`;
+    if (img.width && img.height) {
+      const r = img.width / img.height;
+      if (r > 1.2) div.classList.add('landscape');
+      else if (r > 0.85 && r < 1.15) div.classList.add('square');
+      else if (r < 0.6) div.classList.add('tall');
+    }
+    const el = document.createElement('img');
+    el.src = cloudUrl(img.public_id, 'w_700,q_auto,f_auto');
+    el.alt = img.context?.custom?.caption || `Styling by Sofia Lazzari`;
+    el.loading = 'lazy';
+    el.onclick = () => openLightbox(cloudUrl(img.public_id, 'w_1800,q_auto,f_auto'));
+    div.appendChild(el);
+    grid.appendChild(div);
+  });
+}
+
+// ==============================================================
+//  PLACEHOLDERS
+// ==============================================================
+function renderPlaceholders(grid, section) {
+  const n = section === 'covers' ? 8 : 12;
+  const cols = ['#eae7e2','#e0ddd8','#d6d3ce','#ccc9c4','#e4e1dc','#dad7d2','#eeeae6','#e2dfda','#d4d1cc','#cac7c2','#e7e4df','#ddd9d5'];
+  for (let i = 0; i < n; i++) {
+    const div = document.createElement('div');
+    div.className = 'grid-item';
+    div.style.animationDelay = `${i * 0.05}s`;
+    div.innerHTML = `<div class="placeholder-img" style="background:${cols[i%cols.length]}"></div>`;
+    grid.appendChild(div);
+  }
+}
+
+// ==============================================================
+//  EMAIL SETUP — set via JS to prevent email protection rewriting
+// ==============================================================
+(function() {
+  const u = 'sofialazzaristylist';
+  const d = 'gmail.com';
+  const addr = u + '@' + d;
+  const ml = 'mai' + 'lto:' + addr;
+  const ce = document.getElementById('contactEmail');
+  if (ce) { ce.href = ml; ce.textContent = addr; }
+  const fe = document.getElementById('footerEmail');
+  if (fe) { fe.href = ml; }
+  const se = document.getElementById('splashEmail');
+  if (se) { se.href = ml; se.textContent = 'get in touch: ' + addr; }
+})();
+
+// ==============================================================
+//  LIGHTBOX
+// ==============================================================
+function openLightbox(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = 'auto';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+</body>
+</html>
